@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumen AI - Invoice Extraction</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-large {
+            width: 40px;
+            height: 40px;
+            border-width: 4px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        .loading-text {
+            margin-top: 16px;
+            font-size: 16px;
+            color: #6b7280;
+        }
+
+        /* Error States */
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            height: 32px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-welcome {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #d1d5db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .dashboard-title-section {
+            flex: 1;
+        }
+
+        .dashboard-title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-subtitle {
+            color: #6b7280;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-info h3 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .stat-info .value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon.red { background: #fee2e2; }
+        .stat-icon.blue { background: #dbeafe; }
+        .stat-icon.green { background: #d1fae5; }
+        .stat-icon.yellow { background: #fef3c7; }
+        .stat-icon.purple { background: #e0e7ff; }
+
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .stat-icon.red svg { color: #dc2626; }
+        .stat-icon.blue svg { color: #2563eb; }
+        .stat-icon.green svg { color: #059669; }
+        .stat-icon.yellow svg { color: #d97706; }
+        .stat-icon.purple svg { color: #7c3aed; }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #10b981;
+        }
+
+        .stat-trend svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+        }
+
+        .stat-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Recent Invoices Table */
+        .recent-invoices {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .table-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .invoices-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .invoices-table th {
+            background: #f9fafb;
+            padding: 12px 24px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .invoices-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .invoice-id {
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 9999px;
+        }
+
+        .status-processed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-processing {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-failed {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .table-loading {
+            padding: 48px;
+            text-align: center;
+        }
+
+        .empty-state {
+            padding: 48px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        /* Floating Upload Button */
+        .fab {
+            display: none;
+        }
+        
+        .upload-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .upload-button:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .upload-button svg {
+            width: 22px;
+            height: 22px;
+        }
+        
+        /* Upload Screen */
+        .upload-container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 64px 24px;
+        }
+
+        .upload-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 24px;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            color: #4338ca;
+        }
+
+        .back-button svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+
+        .upload-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .upload-subtitle {
+            font-size: 20px;
+            color: #6b7280;
+        }
+
+        .upload-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .upload-area {
+            border: 2px dashed #c084fc;
+            border-radius: 12px;
+            padding: 48px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #a855f7;
+            background: #faf5ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        .upload-area.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            background: #eef2ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .upload-icon svg {
+            width: 32px;
+            height: 32px;
+            color: #4f46e5;
+        }
+
+        .upload-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .upload-description {
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .upload-formats {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        .processing-indicator {
+            margin-top: 32px;
+            text-align: center;
+            display: none;
+        }
+
+        .processing-indicator.show {
+            display: block;
+        }
+
+        .processing-content {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            background: #eef2ff;
+            border-radius: 8px;
+        }
+
+        .processing-text {
+            color: #4f46e5;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4f46e5;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Results Screen */
+        .results-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .results-header {
+            margin-bottom: 24px;
+        }
+
+        .results-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            height: calc(100vh - 200px);
+        }
+
+        .pdf-viewer, .extracted-data {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-header svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .file-name {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .pdf-content {
+            padding: 0;
+            height: calc(100% - 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f4f6;
+        }
+
+        .pdf-placeholder {
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .pdf-placeholder svg {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            color: #9ca3af;
+        }
+
+        .pdf-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .extracted-data {
+            overflow-y: auto;
+        }
+
+        .data-content {
+            padding: 24px;
+        }
+
+        .data-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+
+        .data-grid {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .data-value {
+            color: #1f2937;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+
+        .line-items {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .line-item {
+            background: white;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .line-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-description {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #6b7280;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            padding-top: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #4338ca;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #374151;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard {
+                padding: 16px;
+            }
+            
+            .upload-container {
+                padding: 32px 16px;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .upload-button {
+                padding: 12px 24px;
+                font-size: 14px;
+                align-self: flex-start;
+            }
+
+            .upload-button svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        .processing-placeholder {
+            text-align: center;
+            padding: 48px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #6b7280;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .processing-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 20px;
+            color: #4f46e5;
+            opacity: 0.8;
+            animation: gentle-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes gentle-pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+
+        .processing-dots {
+            display: flex;
+            gap: 6px;
+            margin: 16px 0 20px 0;
+        }
+
+        .processing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #9ca3af;
+            animation: minimal-bounce 1.6s ease-in-out infinite both;
+        }
+
+        .processing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .processing-dot:nth-child(2) { animation-delay: -0.16s; }
+        .processing-dot:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes minimal-bounce {
+            0%, 80%, 100% { 
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            40% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .processing-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .processing-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            max-width: 280px;
+            line-height: 1.4;
+            opacity: 0.8;
+        }
+
+        .processing-placeholder svg {
+            width: 48px;
+            height: 48px;
+        }
+
+        .checkmark {
+            display: none;
+        }
+
+        .checkmark.show {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading loading-large"></div>
+        <div class="loading-text">Loading...</div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboard" class="screen active">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="https://lumenai.eucloid.com/assets/images/logo.svg" alt="Logo" class="logo">
+                    <!-- <span class="logo-text">Lumen AI</span> -->
+                </div>
+                <div class="user-section">
+                    <div class="user-welcome" id="userWelcome">Welcome back</div>
+                    <div class="user-avatar" id="userAvatar">U</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <div class="dashboard-title-section">
+                    <h1 class="dashboard-title">Invoice Analytics Dashboard</h1>
+                    <p class="dashboard-subtitle">Track your invoice processing performance and insights</p>
+                </div>
+                <button class="upload-button" onclick="showUpload()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    Upload Invoices
+                </button>
+            </div>
+
+            <div class="error-message" id="dashboardError"></div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-loading">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="stat-header">
+                        <div class="stat-info">
+                            <h3>Total Invoices</h3>
+                            <div class="value" id="totalInvoices">-</div>
+                        </div>
+                        <div class="stat-icon blue">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-trend" id="totalInvoicesTrend" style="display: none;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17l9.2-9.2M17 17V7H7"></path>
+                        </svg>
+                        <span id="totalInvoicesTrendText">-</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-loading">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="stat-header">
+                        <div class="stat-info">
+                            <h3>This Month</h3>
+                            <div class="value" id="thisMonth">-</div>
+                        </div>
+                        <div class="stat-icon green">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-trend" id="thisMonthTrend" style="display: none;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17l9.2-9.2M17 17V7H7"></path>
+                        </svg>
+                        <span id="thisMonthTrendText">-</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-loading">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="stat-header">
+                        <div class="stat-info">
+                            <h3>Total Amount</h3>
+                            <div class="value" id="totalAmount">-</div>
+                        </div>
+                        <div class="stat-icon yellow">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-trend" id="totalAmountTrend" style="display: none;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17l9.2-9.2M17 17V7H7"></path>
+                        </svg>
+                        <span id="totalAmountTrendText">-</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-loading">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="stat-header">
+                        <div class="stat-info">
+                            <h3>Errors</h3>
+                            <div class="value" id="totalErrors">-</div>
+                        </div>
+                        <div class="stat-icon red">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-trend" id="totalErrorsTrend" style="display: none;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17l9.2-9.2M17 17V7H7"></path>
+                        </svg>
+                        <span id="totalErrorsTrendText">-</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-loading">
+                        <div class="loading"></div>
+                    </div>
+                    <div class="stat-header">
+                        <div class="stat-info">
+                            <h3>Validation Score</h3>
+                            <div class="value" id="validationScore">-</div>
+                        </div>
+                        <div class="stat-icon green">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-trend" id="validationScoreTrend" style="display: none;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17l9.2-9.2M17 17V7H7"></path>
+                        </svg>
+                        <span id="validationScoreTrendText">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3 class="chart-title">Monthly Invoice Processing</h3>
+                    <div class="chart-container">
+                        <div class="chart-loading">
+                            <div class="loading"></div>
+                        </div>
+                        <canvas id="monthlyChart" style="display: none;"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3 class="chart-title">Invoice Types Distribution</h3>
+                    <div class="chart-container">
+                        <div class="chart-loading">
+                            <div class="loading"></div>
+                        </div>
+                        <canvas id="pieChart" style="display: none;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Invoices Table -->
+            <div class="recent-invoices">
+                <div class="table-header">
+                    <h3 class="table-title">Recent Invoices</h3>
+                </div>
+                <div id="recentInvoicesContent">
+                    <div class="table-loading">
+                        <div class="loading"></div>
+                        <div style="margin-top: 16px; color: #6b7280;">Loading recent invoices...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <button class="fab" onclick="showUpload()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Upload Screen -->
+    <div id="upload" class="screen">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="https://lumenai.eucloid.com/assets/images/logo.svg" alt="Logo" class="logo">
+                    <!-- <span class="logo-text">Lumen AI</span> -->
+                </div>
+                <div class="user-section">
+                    <div class="user-welcome" id="uploadUserWelcome">Welcome back</div>
+                    <div class="user-avatar" id="uploadUserAvatar">U</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="upload-container">
+            <div class="upload-header">
+                <div class="back-button" onclick="showDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Dashboard
+                </div>
+                <h1 class="upload-title">Your Document, Our Magic Touch!</h1>
+                <p class="upload-subtitle">Choose the file or files you'd like to upload.</p>
+            </div>
+
+            <div class="upload-card">
+                <div class="error-message" id="uploadError"></div>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <div class="upload-text">Upload Documents</div>
+                    <p class="upload-description">Drag and drop your files here, or click to browse</p>
+                    <p class="upload-formats">Supported: PDF (max. 10MB)</p>
+                </div>
+
+                <div class="processing-indicator" id="processingIndicator">
+                    <div class="processing-content">
+                        <div class="loading"></div>
+                        <span class="processing-text" id="processingText">Uploading your invoice...</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results" class="screen">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="https://lumenai.eucloid.com/assets/images/logo.svg" alt="Logo" class="logo">
+                    <!-- <span class="logo-text">Lumen AI</span> -->
+                </div>
+                <div class="user-section">
+                    <div class="user-welcome" id="resultsUserWelcome">Welcome back</div>
+                    <div class="user-avatar" id="resultsUserAvatar">U</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-container">
+            <div class="results-header">
+                <div class="back-button" onclick="showDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Dashboard
+                </div>
+                <h1 class="results-title">Extraction Results</h1>
+            </div>
+
+            <div class="error-message" id="resultsError"></div>
+
+            <div class="results-grid">
+                <!-- PDF Viewer -->
+                <div class="pdf-viewer">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            PDF Document
+                        </div>
+                        <span class="file-name" id="fileName"></span>
+                    </div>
+                    <div class="pdf-content" id="pdfContent">
+                        <div class="pdf-placeholder">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <p>PDF Viewer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extracted Data -->
+                <div class="extracted-data">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Extracted Data
+                        </div>
+                    </div>
+
+                    <div class="data-content" id="extractedDataContent">
+                        <!-- This will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <script>
+        // Configuration
+        const CONFIG = {
+            API_BASE_URL: 'https://dioj7afioh.execute-api.us-east-1.amazonaws.com/dev-invoice-pwc', // Update with your API URL
+            POLLING_INTERVAL: 2000, // 2 seconds
+            MAX_POLLING_ATTEMPTS: 60 // 2 minutes max
+        };
+
+        // Global state - Properly declare all global variables
+        let currentUser = null;
+        let currentUploadId = null;
+        let currentProcessingId = null;
+        let currentExtractionId = null;
+        let extractionResults = null; // Store extraction results
+        let currentFile = null; // Store current file
+        let currentPdfUrl = null; // Store PDF URL
+        let pollingInterval = null;
+        let charts = {};
+
+        // API Service
+        class APIService {
+            constructor(baseURL) {
+                this.baseURL = baseURL;
+                this.token = localStorage.getItem('authToken');
+            }
+
+            async request(endpoint, options = {}) {
+                const url = `${this.baseURL}${endpoint}`;
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                };
+
+                if (this.token) {
+                    config.headers.Authorization = `Bearer ${this.token}`;
+                }
+
+                try {
+                    const response = await fetch(url, config);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('API error response:', errorText);
+                        throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}\n${errorText}`);
+                    }
+
+                    // Try to parse as JSON, fallback to text
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return await response.json();
+                    } else {
+                        const textResponse = await response.text();
+                        try {
+                            return JSON.parse(textResponse);
+                        } catch (e) {
+                            return { data: textResponse };
+                        }
+                    }
+                } catch (error) {
+                    console.error('API request failed:', error);
+                    throw error;
+                }
+            }
+
+            // Dashboard APIs
+            async getDashboardStats() {
+                return this.request('/dashboard/stats');
+            }
+
+            async getMonthlyData(months = 6) {
+                return this.request(`/dashboard/monthly-data?months=${months}`);
+            }
+
+            async getInvoiceTypes() {
+                return this.request('/dashboard/invoice-types');
+            }
+
+            async getRecentInvoices(limit = 10) {
+                return this.request(`/dashboard/recent-invoices?limit=${limit}`);
+            }
+
+            // Upload API - Modified to work like second file
+            async uploadFile(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = async function(e) {
+                        try {
+                            const base64Content = btoa(e.target.result);
+                            
+                            const payload = {
+                                file_content: base64Content,
+                                filename: file.name,
+                                content_type: file.type,
+                                s3_bucket: "invoice-pwc"
+                            };
+                            
+                            console.log('Uploading file to:', `${CONFIG.API_BASE_URL}/invoice_upload`);
+                            console.log('Payload size:', JSON.stringify(payload).length);
+                            
+                            const response = await fetch(`${CONFIG.API_BASE_URL}/invoice_upload`, {
+                                method: 'POST',
+                                mode: 'cors',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(payload)
+                            });
+                            
+                            console.log('Upload response status:', response.status);
+                            
+                            if (!response.ok) {
+                                const errorText = await response.text();
+                                console.error('Upload error response:', errorText);
+                                throw new Error(`Upload failed: ${response.status} - ${response.statusText}\n${errorText}`);
+                            }
+                            
+                            const result = await response.json();
+                            console.log('Upload success:', result);
+                            resolve(result);
+                            
+                        } catch (error) {
+                            console.error('Upload error:', error);
+                            reject(error);
+                        }
+                    };
+                    
+                    reader.onerror = () => reject(new Error('Failed to read file'));
+                    reader.readAsBinaryString(file);
+                });
+            }
+
+            // Process API - Modified to work like second file, returns direct results
+            async processInvoice(uploadData, options = {}) {
+                const payload = {
+                    api_key: "AIzaSyDFE1dtBB918ToieGI-fSF5EvS0IMGjYN4",
+                    s3_bucket: uploadData.s3_bucket,
+                    s3_key: uploadData.s3_key,
+                    custom_prompt: `
+                    Please analyze this PDF invoice document and extract all the information in the exact JSON format specified below.
+
+For PDFs, focus on:
+1. Document type and metadata (check all pages)
+2. Vendor/supplier information (name, GSTIN, address, contact, bank details)
+3. Client/buyer information (name, GSTIN, address, contact)
+4. Invoice details (number, dates, shipping info)
+5. Line items with quantities, rates, and amounts (may span multiple pages)
+6. Tax breakdown (CGST, SGST, IGST with rates and amounts)
+7. Payment summary and total calculations
+8. Any QR codes, signatures, or special identifiers
+9. Terms and conditions if present
+10. Invoice Number should always be positive
+11. Taxable Value = Invoice Value – Non-Taxable Charges. (Calculate the taxable value using this formula if no taxable values are mentioned)
+12. Extract all monetary or numerical values (such as taxable amount, invoice total, GST, CGST, SGST, IGST, etc.) exactly as they appear in the document, including commas (e.g., '1,23,456.78'). After extraction, remove the commas from these values. The final output should be plain numbers without any commas (e.g., '123456.78'), suitable for computation or database storage.
+13. Date should be extracted only in the format yyyy-mm-dd.
+14. If the tax fields are not present in line items, then the values for the tax fields should be null -> Then the taxable amount and the total amount shoule be same.
+Required JSON structure:
+
+{ 
+  "invoice_metadata": { 
+    "invoice_type": "", 
+    "invoice_date": "", 
+  }, 
+  "vendor_details": { 
+    "name": "", 
+    "gstin": "", 
+    "pan": "", 
+    "address": { 
+      "street": "", 
+      "city": "", 
+      "state": "", 
+      "pincode": "", 
+      "country": "" 
+    }, 
+    "contact": { 
+      "email": "", 
+      "phone": "", 
+      "website": "" 
+    }, 
+    "bank_details": { 
+      "bank_name": "", 
+      "account_number": "", 
+      "ifsc_code": "", 
+      "branch": "" 
+    } 
+  }, 
+  "client_details": { 
+    "name": "", 
+    "gstin": "", 
+    "pan": "", 
+    "address": { 
+      "street": "", 
+      "city": "", 
+      "state": "", 
+      "pincode": "", 
+      "country": "" 
+    }, 
+    "contact": { 
+      "email": "", 
+      "phone": "" 
+    } 
+  }, 
+  "invoice_details": { 
+    "invoice_number": "", 
+    "invoice_date": "", 
+    "due_date": "", 
+    "place_of_supply": "", 
+    "irn_number": "", 
+    "ack_number": "", 
+    "ack_date": "", 
+    "shipping_details": { 
+      "dispatch_mode": "", 
+      "tracking_number": "", 
+      "dispatch_date": "", 
+      "destination": "" 
+    } 
+  }, 
+  "line_items": [ 
+    { 
+    "item_number": "", 
+    "description": "", 
+    "hsn_sac_code": "", 
+    "quantity": null, 
+    "unit": "", 
+    "rate": null, 
+    "discount_percentage": null, 
+    "taxable_value": null, 
+    "IGST_percentage" : null, 
+    "SGST_percentage" : null, 
+    "CGST_percentage" : null, 
+    "IGST_value" : null, 
+    "SGST_value" : null, 
+    "CGST_value" : null, 
+    "total_tax"	: null, 
+    "item_total" : null , 
+	 
+    } 
+  ], 
+  "tax_details": { 
+    "cgst": { 
+      "rate": null, 
+      "amount": null 
+    }, 
+    "sgst": { 
+      "rate": null,   
+      "amount": null 
+    }, 
+    "igst": { 
+      "rate": null, 
+      "amount": null 
+    }, 
+    "total_tax_amount": null 
+  }, 
+  "payment_summary": { 
+    "taxable_value": null, 
+    "additional_charges": [ 
+      { 
+        "description": "", 
+        "amount": null 
+      } 
+    ], 
+    "discount": null, 
+    "roundoff": null, 
+    "total_invoice_value": null, 
+    "total_invoice_value_in_words": "", 
+    "amount_due": null, 
+    "payment_terms": "", 
+    "payment_status": "" 
+  }, 
+} 
+
+Return ONLY the JSON object, no additional text or explanation.`,
+                    temperature: 0.1,
+                    top_p: 0.8,
+                    top_k: 20,
+                    output_format: "json",
+                    ...options
+                };
+                
+                try {
+                    console.log('Processing invoice with:', payload);
+                    
+                    const response = await fetch(`http://127.0.0.1:8000/invoice_process`, {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    console.log('Process response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Process error response:', errorText);
+                        throw new Error(`Processing failed: ${response.status} - ${response.statusText}\n${errorText}`);
+                    }
+                    
+                    const result = await response.text();
+                    console.log('Process response:', result);
+                    
+                    return JSON.parse(result);
+                } catch (error) {
+                    console.error('Fetch error in processInvoice:', error);
+                    throw error; // Re-throw to be caught by handleFileUpload
+                }
+            }
+
+            // User APIs
+            async getUserProfile() {
+                try {
+                    return await this.request('/user/profile');
+                } catch (error) {
+                    console.error('Error fetching user profile, using default user:', error);
+                    // Return a default user object instead of throwing an error
+                    return { data: { name: 'User', email: 'user@example.com' } };
+                }
+            }
+        }
+
+        const api = new APIService(CONFIG.API_BASE_URL);
+
+        // Utility functions
+        function showLoading(show = true) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.remove('hidden');
+            } else {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        function hideError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.classList.remove('show');
+        }
+
+        function formatCurrency(amount, currency = 'INR') {
+            if (currency === 'INR') {
+                if (amount >= 10000000) { // 1 crore
+                    return `₹${(amount / 10000000).toFixed(1)}Cr`;
+                } else if (amount >= 100000) { // 1 lakh
+                    return `₹${(amount / 100000).toFixed(1)}L`;
+                } else {
+                    return `₹${amount.toLocaleString()}`;
+                }
+            }
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: currency
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-IN');
+        }
+
+        // Navigation functions
+        function showDashboard() {
+            hideAllScreens();
+            document.getElementById('dashboard').classList.add('active');
+            loadDashboardData();
+        }
+
+        async function showUpload() {
+            hideAllScreens();
+            document.getElementById('upload').classList.add('active');
+            
+            // Load user profile for API screens
+            if (!currentUser || currentUser.name === 'John Doe') {
+                await loadUserProfileForAPI();
+            }
+            
+            resetUploadForm();
+            
+        }
+
+        async function showResults() {
+            hideAllScreens();
+            document.getElementById('results').classList.add('active');
+            
+            // Load user profile for API screens
+            if (!currentUser || currentUser.name === 'John Doe') {
+                await loadUserProfileForAPI();
+            }
+            
+            loadExtractionResults();
+        }
+
+        function hideAllScreens() {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => screen.classList.remove('active'));
+        }
+
+        // Dashboard functions - Using hardcoded data as requested
+        function loadDashboardData() {
+            try {
+                hideError('dashboardError');
+                
+                // Load user profile (dummy data for dashboard)
+                if (!currentUser) {
+                    loadUserProfile();
+                }
+
+                // Use hardcoded data for dashboard
+                const dummyStats = {
+                    totalInvoices: 1247,
+                    thisMonth: 89,
+                    totalAmount: 2847593.50,
+                    totalErrors: 20,
+                    validationScore: 95
+                };
+
+                const dummyMonthlyData = [
+                    { month: 'Jan', invoices: 45, amount: 125000 },
+                    { month: 'Feb', invoices: 52, amount: 145000 },
+                    { month: 'Mar', invoices: 61, amount: 167000 },
+                    { month: 'Apr', invoices: 58, amount: 158000 },
+                    { month: 'May', invoices: 73, amount: 189000 },
+                    { month: 'Jun', invoices: 89, amount: 234000 }
+                ];
+
+                const dummyTypesData = [
+                    { name: 'Tax Invoice', value: 45, color: '#FF6B6B' },
+                    { name: 'Purchase Invoice', value: 30, color: '#4ECDC4' },
+                    { name: 'Credit Note', value: 15, color: '#45B7D1' },
+                    { name: 'Debit Note', value: 10, color: '#96CEB4' }
+                ];
+
+                const dummyRecentInvoices = [
+                    { id: 'INV-2024-001', vendor: 'Tech Solutions Ltd', amount: 15600, currency: 'INR', date: '2024-08-01', status: 'processed' },
+                    { id: 'INV-2024-002', vendor: 'Office Supplies Co', amount: 2340, currency: 'INR', date: '2024-08-02', status: 'processed' },
+                    { id: 'INV-2024-003', vendor: 'Marketing Agency', amount: 45000, currency: 'INR', date: '2024-08-03', status: 'processed' },
+                    { id: 'INV-2024-004', vendor: 'Cloud Services Inc', amount: 8900, currency: 'INR', date: '2024-08-04', status: 'processed' }
+                ];
+
+                // Simulate loading delay
+                setTimeout(() => {
+                    updateStatsCards(dummyStats);
+                    updateMonthlyChart(dummyMonthlyData);
+                    updatePieChart(dummyTypesData);
+                    updateRecentInvoices(dummyRecentInvoices);
+                }, 500);
+
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+                showError('dashboardError', 'Failed to load dashboard data. Please try again.');
+            }
+        }
+
+        function loadUserProfile() {
+            // Use dummy user data for dashboard
+            currentUser = { 
+                name: 'John Doe', 
+                email: 'john.doe@company.com' 
+            };
+            updateUserDisplay();
+        }
+
+        function updateUserDisplay() {
+            const userName = currentUser.name || 'User';
+            const userInitial = userName.charAt(0).toUpperCase();
+            
+            // Update all user elements
+            document.getElementById('userWelcome').textContent = `Welcome back, ${userName.split(' ')[0]}`;
+            document.getElementById('userAvatar').textContent = userInitial;
+            document.getElementById('uploadUserWelcome').textContent = `Welcome back, ${userName.split(' ')[0]}`;
+            document.getElementById('uploadUserAvatar').textContent = userInitial;
+            document.getElementById('resultsUserWelcome').textContent = `Welcome back, ${userName.split(' ')[0]}`;
+            document.getElementById('resultsUserAvatar').textContent = userInitial;
+        }
+
+        function updateStatsCards(stats) {
+            document.getElementById('totalInvoices').textContent = stats.totalInvoices?.toLocaleString() || '0';
+            document.getElementById('thisMonth').textContent = stats.thisMonth?.toString() || '0';
+            document.getElementById('totalAmount').textContent = formatCurrency(stats.totalAmount || 0);
+            document.getElementById('totalErrors').textContent = stats.totalErrors?.toString() || '0';
+            document.getElementById('validationScore').textContent = `${stats.validationScore || 0}%`;
+
+            // Hide loading indicators
+            document.querySelectorAll('.stat-loading').forEach(loader => {
+                loader.style.display = 'none';
+            });
+        }
+
+        function updateMonthlyChart(data) {
+            const ctx = document.getElementById('monthlyChart');
+            const loading = ctx.parentElement.querySelector('.chart-loading');
+            
+            loading.style.display = 'none';
+            ctx.style.display = 'block';
+
+            if (charts.monthly) {
+                charts.monthly.destroy();
+            }
+
+            charts.monthly = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(item => item.month),
+                    datasets: [{
+                        label: 'Invoices',
+                        data: data.map(item => item.invoices),
+                        backgroundColor: '#4F46E5',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#E5E7EB'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updatePieChart(data) {
+            const ctx = document.getElementById('pieChart');
+            const loading = ctx.parentElement.querySelector('.chart-loading');
+            
+            loading.style.display = 'none';
+            ctx.style.display = 'block';
+
+            if (charts.pie) {
+                charts.pie.destroy();
+            }
+
+            charts.pie = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.map(item => item.name),
+                    datasets: [{
+                        data: data.map(item => item.value),
+                        backgroundColor: data.map(item => item.color || '#4F46E5'),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateRecentInvoices(invoices) {
+            const container = document.getElementById('recentInvoicesContent');
+            
+            if (!invoices || invoices.length === 0) {
+                container.innerHTML = '<div class="empty-state">No recent invoices found.</div>';
+                return;
+            }
+
+            const tableHTML = `
+                <table class="invoices-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice ID</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${invoices.map(invoice => `
+                            <tr>
+                                <td class="invoice-id">${invoice.id}</td>
+                                <td>${invoice.vendor}</td>
+                                <td>${formatCurrency(invoice.amount, invoice.currency)}</td>
+                                <td>${formatDate(invoice.date)}</td>
+                                <td><span class="status-badge status-${invoice.status}">${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+        }
+
+        // User profile for API screens (upload/results) - Try API call, fallback to default
+        async function loadUserProfileForAPI() {
+            const response = await api.getUserProfile();
+            currentUser = response.data;
+            updateUserDisplay();
+        }
+
+        // Upload functions - Modified to work without polling
+        function resetUploadForm() {
+            hideError('uploadError');
+            const processingIndicator = document.getElementById('processingIndicator');
+            processingIndicator.classList.remove('show');
+            document.getElementById('uploadArea').classList.remove('disabled');
+            document.getElementById('progressFill').style.width = '0%';
+            
+            const loadingSpinner = processingIndicator.querySelector('.loading');
+            const checkmark = processingIndicator.querySelector('.checkmark');
+            if(loadingSpinner) loadingSpinner.style.display = 'inline-block';
+            if(checkmark) checkmark.style.display = 'none';
+
+            currentUploadId = null;
+            currentProcessingId = null;
+            currentExtractionId = null;
+            // Don't reset currentFile, extractionResults, or currentPdfUrl here
+        }
+
+        // Modified handleFileUpload to work without status polling and store necessary data
+        async function handleFileUpload(file) {
+            if (!['application/pdf'].includes(file.type)) { // 10MB limit
+                showError('uploadError', 'File size must be less than 10MB');
+                return;
+            }
+
+            try {
+                hideError('uploadError');
+                document.getElementById('uploadArea').classList.add('disabled');
+                const processingIndicator = document.getElementById('processingIndicator');
+                const processingText = document.getElementById('processingText');
+                const progressFill = document.getElementById('progressFill');
+                const loadingSpinner = processingIndicator.querySelector('.loading');
+                
+                // Create and add the checkmark icon
+                let checkmark = processingIndicator.querySelector('.checkmark');
+                if (!checkmark) {
+                    checkmark = document.createElement('div');
+                    checkmark.className = 'checkmark';
+                    checkmark.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px" style="color: #10b981;">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>`;
+                    loadingSpinner.parentNode.insertBefore(checkmark, loadingSpinner.nextSibling);
+                }
+
+
+                processingIndicator.classList.add('show');
+                processingText.textContent = 'Uploading your invoice...';
+                progressFill.style.width = '50%';
+
+                // Store the current file
+                currentFile = file;
+
+                // Upload file
+                const uploadResponse = await api.uploadFile(file);
+                console.log('Upload response:', uploadResponse);
+                
+                progressFill.style.width = '100%';
+                processingText.textContent = 'Upload Complete!';
+                loadingSpinner.style.display = 'none';
+                checkmark.style.display = 'inline-block';
+
+
+                // Store the PDF URL from upload response
+                const uploadData = uploadResponse.data || uploadResponse;
+                currentPdfUrl = uploadData.presigned_url;
+                
+                setTimeout(() => {
+                    showResults();
+                }, 1000);
+                
+                // Process invoice in the background
+                extractionResults = null; // Reset previous results
+                const processResponse = await api.processInvoice(uploadData);
+                console.log('Process response:', processResponse);
+                
+                // Store results directly
+                extractionResults = processResponse;
+                
+                // Always update the results display when processing completes
+                if (document.getElementById('results').classList.contains('active')) {
+                    console.log('Updating results display with:', extractionResults);
+                    loadExtractionResults();
+                }
+
+            } catch (error) {
+                console.error('Upload/Process failed:', error);
+                
+                // If we're on the results screen, show error there instead of upload screen
+                if (document.getElementById('results').classList.contains('active')) {
+                    showError('resultsError', error.message || 'Processing failed. Please try again.');
+                    // Update the placeholder to show error state
+                    const container = document.getElementById('extractedDataContent');
+                    container.innerHTML = `
+                        <div class="processing-placeholder" style="background: rgba(254, 226, 226, 0.8); color: #dc2626; border-color: #fca5a5;">
+                            <div class="processing-icon" style="color: #dc2626;">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                                </svg>
+                            </div>
+                            <div class="processing-title" style="color: #991b1b;">Processing Failed</div>
+                            <div class="processing-subtitle" style="color: #dc2626;">There was an error processing your document. Please try uploading again.</div>
+                        </div>
+                    `;
+                } else {
+                    showError('uploadError', error.message || 'Processing failed. Please try again.');
+                    resetUploadForm();
+                }
+            }
+        }
+
+        // Results functions - Modified to handle direct results and PDF display
+        function loadExtractionResults() {
+            try {
+                hideError('resultsError');
+                
+                // Display PDF if we have the URL
+                if (currentPdfUrl) {
+                    displayPdf(currentPdfUrl);
+                }
+                
+                // Update filename
+                if (currentFile) {
+                    updateFileName(currentFile.name);
+                }
+                
+                const container = document.getElementById('extractedDataContent');
+
+                // Use the directly stored results instead of API call
+                if (extractionResults) {
+                    displayExtractionResults(extractionResults);
+                } else {
+                    // Show the new placeholder
+                    container.innerHTML = `
+                        <div class="processing-placeholder">
+                            <div class="processing-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0.621 0 1.125-.504 1.125-1.125V9.375c0-.621.504-1.125 1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+                                </svg>
+                            </div>
+                            <div class="processing-dots">
+                                <div class="processing-dot"></div>
+                                <div class="processing-dot"></div>
+                                <div class="processing-dot"></div>
+                            </div>
+                            <div class="processing-title">Analyzing Document</div>
+                            <div class="processing-subtitle">Our AI is extracting key information from your invoice. This may take a few moments.</div>
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Failed to load extraction results:', error);
+                showError('resultsError', 'Failed to load extraction results. Please try again.');
+            }
+        }
+
+        // New function to display PDF
+        function displayPdf(pdfUrl) {
+            const pdfContent = document.getElementById('pdfContent');
+            
+            // Create iframe to display PDF
+            pdfContent.innerHTML = `
+                <iframe class="pdf-iframe" src="${pdfUrl}" title="PDF Document">
+                    <p>Your browser does not support PDFs. <a href="${pdfUrl}" target="_blank">Download the PDF</a>.</p>
+                </iframe>
+            `;
+        }
+
+        function displayExtractionResults(data) {
+            const container = document.getElementById('extractedDataContent');
+            console.log('displayExtractionResults called with:', data);
+            console.log('Data type:', typeof data);
+            console.log('Is array:', Array.isArray(data));
+            
+            // Handle different response formats
+            if (typeof data === 'string') {
+                // Handle raw text response
+                container.innerHTML = `
+                    <div class="data-section">
+                        <h4 class="section-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Raw Extraction Output
+                        </h4>
+                        <pre style="background: #f8fafc; padding: 1rem; border-radius: 8px; white-space: pre-wrap; font-size: 0.875rem; max-height: 400px; overflow-y: auto;">${data}</pre>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="exportData()" id="exportBtn">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Export Data
+                        </button>
+                        <button class="btn btn-secondary" onclick="showDashboard()">
+                            Done
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Handle structured JSON data
+            let processedData = data;
+
+            // If data has a nested structure, try to extract the actual invoice data
+            if (data.data) {
+                processedData = data.data;
+            }
+
+            // Handle array of invoices - display all invoices
+            if (Array.isArray(processedData)) {
+                console.log('Processing array of', processedData.length, 'invoices');
+                let allInvoicesHtml = '';
+                
+                processedData.forEach((invoice, index) => {
+                    allInvoicesHtml += generateInvoiceHtml(invoice, index + 1);
+                });
+                
+                container.innerHTML = allInvoicesHtml + `
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="exportData()" id="exportBtn">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Export Data
+                        </button>
+                        <button class="btn btn-secondary" onclick="showDashboard()">
+                            Done
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Handle single invoice object
+            container.innerHTML = generateInvoiceHtml(processedData) + `
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="exportData()" id="exportBtn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="showDashboard()">
+                        Done
+                    </button>
+                </div>
+            `;
+        }
+
+        function generateInvoiceHtml(processedData, invoiceNumber = null) {
+            const invoiceTitle = invoiceNumber ? `<div style="background: #f3f4f6; padding: 16px; margin-bottom: 24px; border-radius: 8px; border-left: 4px solid #4f46e5;"><h3 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Invoice #${invoiceNumber}</h3></div>` : '';
+            
+            const html = invoiceTitle + `
+                <!-- Invoice Metadata -->
+                ${processedData.invoice_metadata ? `
+                <div class="data-section">
+                    <h4 class="section-title">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Invoice Metadata
+                    </h4>
+                    <div class="data-grid">
+                        ${processedData.invoice_metadata.invoice_type ? `<div class="data-row"><span class="data-label">Invoice Type</span><span class="data-value">${processedData.invoice_metadata.invoice_type}</span></div>` : ''}
+                        ${processedData.invoice_metadata.invoice_date ? `<div class="data-row"><span class="data-label">Invoice Date</span><span class="data-value">${processedData.invoice_metadata.invoice_date}</span></div>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Vendor Details -->
+                ${processedData.vendor_details ? `
+                <div class="data-section">
+                    <h4 class="section-title">Vendor Details</h4>
+                    <div class="data-grid">
+                        ${processedData.vendor_details.name ? `<div class="data-row"><span class="data-label">Name</span><span class="data-value">${processedData.vendor_details.name}</span></div>` : ''}
+                        ${processedData.vendor_details.gstin ? `<div class="data-row"><span class="data-label">GSTIN</span><span class="data-value">${processedData.vendor_details.gstin}</span></div>` : ''}
+                        ${processedData.vendor_details.pan ? `<div class="data-row"><span class="data-label">PAN</span><span class="data-value">${processedData.vendor_details.pan}</span></div>` : ''}
+                        ${processedData.vendor_details.address ? `<div class="data-row"><span class="data-label">Address</span><span class="data-value">${formatAddress(processedData.vendor_details.address)}</span></div>` : ''}
+                        ${processedData.vendor_details.contact?.phone ? `<div class="data-row"><span class="data-label">Phone</span><span class="data-value">${processedData.vendor_details.contact.phone}</span></div>` : ''}
+                        ${processedData.vendor_details.contact?.email ? `<div class="data-row"><span class="data-label">Email</span><span class="data-value">${processedData.vendor_details.contact.email}</span></div>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Client Details -->
+                ${processedData.client_details ? `
+                <div class="data-section">
+                    <h4 class="section-title">Client Details</h4>
+                    <div class="data-grid">
+                        ${processedData.client_details.name ? `<div class="data-row"><span class="data-label">Name</span><span class="data-value">${processedData.client_details.name}</span></div>` : ''}
+                        ${processedData.client_details.gstin ? `<div class="data-row"><span class="data-label">GSTIN</span><span class="data-value">${processedData.client_details.gstin}</span></div>` : ''}
+                        ${processedData.client_details.address ? `<div class="data-row"><span class="data-label">Address</span><span class="data-value">${formatAddress(processedData.client_details.address)}</span></div>` : ''}
+                        ${processedData.client_details.contact?.email ? `<div class="data-row"><span class="data-label">Email</span><span class="data-value">${processedData.client_details.contact.email}</span></div>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Invoice Details -->
+                ${processedData.invoice_details ? `
+                <div class="data-section">
+                    <h4 class="section-title">Invoice Details</h4>
+                    <div class="data-grid">
+                        ${processedData.invoice_details.invoice_number ? `<div class="data-row"><span class="data-label">Invoice Number</span><span class="data-value">${processedData.invoice_details.invoice_number}</span></div>` : ''}
+                        ${processedData.invoice_details.invoice_date ? `<div class="data-row"><span class="data-label">Invoice Date</span><span class="data-value">${processedData.invoice_details.invoice_date}</span></div>` : ''}
+                        ${processedData.invoice_details.due_date ? `<div class="data-row"><span class="data-label">Due Date</span><span class="data-value">${processedData.invoice_details.due_date}</span></div>` : ''}
+                        ${processedData.invoice_details.place_of_supply ? `<div class="data-row"><span class="data-label">Place of Supply</span><span class="data-value">${processedData.invoice_details.place_of_supply}</span></div>` : ''}
+                        ${processedData.invoice_details.irn_number ? `<div class="data-row"><span class="data-label">IRN Number</span><span class="data-value">${processedData.invoice_details.irn_number}</span></div>` : ''}
+                        ${processedData.invoice_details.ack_number ? `<div class="data-row"><span class="data-label">ACK Number</span><span class="data-value">${processedData.invoice_details.ack_number}</span></div>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Line Items -->
+                ${processedData.line_items && processedData.line_items.length > 0 ? `
+                <div class="data-section">
+                    <h4 class="section-title">Line Items</h4>
+                    <div class="line-items">
+                        ${processedData.line_items.map((item, index) => `
+                            <div class="line-item">
+                                <div class="item-description">${item.description || `Item ${index + 1}`}</div>
+                                <div class="item-details">
+                                    ${item.quantity ? `<span>Qty: ${item.quantity}</span>` : ''}
+                                    ${item.rate ? `<span>Rate: ${formatCurrency(item.rate)}</span>` : ''}
+                                    ${item.taxable_value ? `<span>Amount: ${formatCurrency(item.taxable_value)}</span>` : ''}
+                                    ${item.hsn_sac_code ? `<span>HSN/SAC: ${item.hsn_sac_code}</span>` : ''}
+                                    ${item.IGST_percentage ? `<span>IGST: ${item.IGST_percentage}%</span>` : ''}
+                                    ${item.SGST_percentage ? `<span>SGST: ${item.SGST_percentage}%</span>` : ''}
+                                    ${item.CGST_percentage ? `<span>CGST: ${item.CGST_percentage}%</span>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Tax Details -->
+                ${processedData.tax_details ? `
+                <div class="data-section">
+                    <h4 class="section-title">Tax Details</h4>
+                    <div class="data-grid">
+                        ${processedData.tax_details.cgst && processedData.tax_details.cgst.amount ? `<div class="data-row"><span class="data-label">CGST</span><span class="data-value">${processedData.tax_details.cgst.rate ? processedData.tax_details.cgst.rate + '% - ' : ''}${formatCurrency(processedData.tax_details.cgst.amount)}</span></div>` : ''}
+                        ${processedData.tax_details.sgst && processedData.tax_details.sgst.amount ? `<div class="data-row"><span class="data-label">SGST</span><span class="data-value">${processedData.tax_details.sgst.rate ? processedData.tax_details.sgst.rate + '% - ' : ''}${formatCurrency(processedData.tax_details.sgst.amount)}</span></div>` : ''}
+                        ${processedData.tax_details.igst && processedData.tax_details.igst.amount ? `<div class="data-row"><span class="data-label">IGST</span><span class="data-value">${processedData.tax_details.igst.rate ? processedData.tax_details.igst.rate + '% - ' : ''}${formatCurrency(processedData.tax_details.igst.amount)}</span></div>` : ''}
+                        ${processedData.tax_details.total_tax_amount ? `<div class="data-row"><span class="data-label">Total Tax</span><span class="data-value">${formatCurrency(processedData.tax_details.total_tax_amount)}</span></div>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Payment Summary -->
+                ${processedData.payment_summary ? `
+                <div class="data-section">
+                    <h4 class="section-title">Payment Summary</h4>
+                    <div class="data-grid">
+                        ${processedData.payment_summary.taxable_value ? `<div class="data-row"><span class="data-label">Taxable Value</span><span class="data-value">${formatCurrency(processedData.payment_summary.taxable_value)}</span></div>` : ''}
+                        ${processedData.payment_summary.total_invoice_value ? `<div class="data-row"><span class="data-label">Total Invoice Value</span><span class="data-value">${formatCurrency(processedData.payment_summary.total_invoice_value)}</span></div>` : ''}
+                        ${processedData.payment_summary.amount_due ? `<div class="data-row"><span class="data-label">Amount Due</span><span class="data-value">${formatCurrency(processedData.payment_summary.amount_due)}</span></div>` : ''}
+                        ${processedData.payment_summary.payment_status ? `<div class="data-row"><span class="data-label">Payment Status</span><span class="data-value">${processedData.payment_summary.payment_status}</span></div>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+
+            return html;
+        }
+
+        function formatAddress(address) {
+            if (!address) return 'N/A';
+            return [address.street, address.city, address.state, address.pincode, address.country].filter(Boolean).join(', ');
+        }
+
+        function updateFileName(name) {
+            const fileNameElement = document.getElementById('fileName');
+            if (fileNameElement) {
+                fileNameElement.textContent = name;
+            }
+        }
+
+        function exportData() {
+            if (!extractionResults) {
+                alert('No data to export.');
+                return;
+            }
+            const dataStr = JSON.stringify(extractionResults, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${currentFile.name.split('.')[0]}_extracted.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            showDashboard();
+
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.remove('dragover');
+                });
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileUpload(e.dataTransfer.files[0]);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

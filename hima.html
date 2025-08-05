@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Invoice Processing</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+<!--            <button class="sidebar-toggle" id="sidebarToggle">-->
+<!--                <i class="fas fa-chevron-left"></i>-->
+<!--            </button>-->
+            <div class="logo-container">
+                <img src="https://lumenai.eucloid.com/assets/images/logo.svg" alt="Logo" class="logo">
+            </div>
+            
+            <div class="upload-section">
+                <h3><i class="fas fa-upload"></i> Upload Invoice</h3>
+                
+                <div class="file-upload-area" id="fileUploadArea">
+                    <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <p>Drag & drop PDF file here or <span class="browse-link">browse</span></p>
+                        <small>PDF files only</small>
+                    </div>
+                </div>
+                
+                <div class="selected-file" id="selectedFile" style="display: none;">
+                    <i class="fas fa-file-pdf"></i>
+                    <span id="fileName"></span>
+                    <button id="removeFile" class="remove-btn">×</button>
+                </div>
+                
+                <button id="processBtn" class="process-btn" disabled>
+                    <i class="fas fa-rocket"></i> <span>Process Invoice</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="main-header">
+                <h1><i class="fas fa-receipt"></i> AI Invoice Processing</h1>
+            </header>
+
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <h2>Welcome to AI Invoice Processing</h2>
+                    <p>Upload a PDF invoice to extract structured data automatically using advanced AI technology.</p>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-brain"></i>
+                            <span>AI-Powered Extraction</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-download"></i>
+                            <span>JSON & CSV Export</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Secure Processing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="processingScreen" class="processing-screen" style="display: none;">
+                <div class="processing-columns">
+                    <!-- PDF Preview Column -->
+                    <div class="pdf-column">
+                        <div class="section-header">
+                            <h3><i class="fas fa-file-pdf"></i> PDF Document</h3>
+                        </div>
+                        <div class="pdf-preview" id="pdfPreview">
+                            <div class="pdf-info">
+                                <span id="pdfFileName"></span>
+                            </div>
+                            <iframe id="pdfViewer" style="width: 100%; height: 600px; border: none; border-radius: 8px;"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Results Column -->
+                    <div class="results-column">
+                        <div class="section-header">
+                            <h3><i class="fas fa-search"></i> Extracted Data</h3>
+                        </div>
+                        
+                        <div id="loadingState" class="loading-state">
+                            <div class="spinner"></div>
+                            <p>Processing invoice with AI...</p>
+                            <small>This may take a few moments</small>
+                        </div>
+
+                        <div id="extractedData" class="extracted-data" style="display: none;">
+                            <!-- Dynamic content will be inserted here -->
+                        </div>
+
+                        <div id="downloadSection" class="download-section" style="display: none;">
+                            <hr>
+                            <h4><i class="fas fa-download"></i> Download Results</h4>
+                            <div class="download-buttons">
+                                <button id="downloadJson" class="download-btn json-btn">
+                                    <i class="fas fa-file-code"></i> JSON
+                                </button>
+                                <button id="downloadCsv" class="download-btn csv-btn">
+                                    <i class="fas fa-table"></i> CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="errorScreen" class="error-screen" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Processing Error</h3>
+                    <p id="errorMessage"></p>
+                    <button id="retryBtn" class="retry-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
