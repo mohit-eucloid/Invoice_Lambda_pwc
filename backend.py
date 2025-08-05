@@ -41,7 +41,7 @@ class ProcessPDFRequest(BaseModel):
     original_filename: Optional[str] = None
     custom_prompt: Optional[str] = None
     custom_system_prompt: Optional[str] = None
-    model_name: Optional[str] = "gemini-2.0-flash-001"
+    model_name: Optional[str] = "gemini-2.5-flash"
     temperature: Optional[float] = 0.0
     top_k: Optional[int] = None
     top_p: Optional[float] = None
@@ -262,61 +262,10 @@ async def process_pdf_endpoint(request: ProcessPDFRequest):
             cleaned_result = result_text.strip()
             
             # Remove common AI response artifacts
-            if cleaned_result.startswith('```json'):
-                cleaned_result = cleaned_result[7:]  # Remove ```json
-            if cleaned_result.endswith('```'):
-                cleaned_result = cleaned_result[:-3]  # Remove ```
+            cleaned_result=cleaned_result.replace("```json","").replace("```","")
             
             cleaned_result = cleaned_result.strip()
-            
-            # Try multiple parsing strategies
-            parsed_data = None
-            
-            # Strategy 1: Direct JSON parsing
-            try:
-                parsed_data = json.loads(cleaned_result)
-                print("Successfully parsed JSON directly")
-            except json.JSONDecodeError as e:
-                print(f"Direct JSON parsing failed: {e}")
-                
-                # Strategy 2: Try to find JSON array/object in the text
-                try:
-                    # Look for JSON array starting with [
-                    if '[' in cleaned_result and ']' in cleaned_result:
-                        start_idx = cleaned_result.find('[')
-                        end_idx = cleaned_result.rfind(']') + 1
-                        json_part = cleaned_result[start_idx:end_idx]
-                        parsed_data = json.loads(json_part)
-                        print("Successfully parsed JSON array from text")
-                    # Look for JSON object starting with {
-                    elif '{' in cleaned_result and '}' in cleaned_result:
-                        start_idx = cleaned_result.find('{')
-                        end_idx = cleaned_result.rfind('}') + 1
-                        json_part = cleaned_result[start_idx:end_idx]
-                        parsed_data = json.loads(json_part)
-                        print("Successfully parsed JSON object from text")
-                except json.JSONDecodeError as e2:
-                    print(f"Extraction-based JSON parsing also failed: {e2}")
-            
-            # Return parsed data directly or fallback
-            if parsed_data is not None:
-                # Return the parsed data directly (not wrapped in {"result": ...})
-                return parsed_data
-            
-            else:
-                # If all parsing fails, return error with raw text for debugging
-                print(f"All JSON parsing failed. Raw result: {result_text[:500]}...")
-                return {
-                    "error": "Failed to parse JSON response",
-                    "raw_result": result_text,
-                    "parsing_attempts": [
-                        "Direct JSON parsing failed",
-                        "JSON extraction from text failed"
-                    ]
-                }
-        else:
-            # For non-JSON formats, return wrapped in result
-            return {"result": result_text}
+            return json.loads(cleaned_result)
 
     except HTTPException:
         # Re-raise HTTP exceptions
