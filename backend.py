@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
@@ -19,6 +20,12 @@ s3_client = boto3.client('s3')
 
 # Initialize FastAPI app
 app = FastAPI(title="PDF Processing Service", version="1.0.0")
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    print(f"Request path: {request.url.path}, Method: {request.method}")
+    response = await call_next(request)
+    return response
 
 # Add CORS middleware
 app.add_middleware(
@@ -149,12 +156,6 @@ def process_with_gemini(file_content, api_key, custom_prompt=None, custom_system
         # Clean up the temporary file
         if 'temp_file_path' in locals() and os.path.exists(temp_file_path):
             os.unlink(temp_file_path)
-
-@app.get("/")
-async def root():
-    """Health check endpoint"""
-    return {"message": "PDF Processing Service is running"}
-
 
 @app.post("/user/profile")
 async def user():
@@ -293,6 +294,9 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         headers=get_cors_headers()
     )
 
+# Mount static files - THIS MUST BE AFTER API ROUTES
+app.mount("/", StaticFiles(directory="ui", html=True), name="ui")
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001, workers=7)
