@@ -3,3 +3,5 @@ sqlalchemy_layer/
 __pycache__/
 dummy/
 new_dep/
+results.txt
+*.log

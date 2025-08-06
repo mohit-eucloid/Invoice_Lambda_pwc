@@ -155,6 +155,11 @@ async def root():
     """Health check endpoint"""
     return {"message": "PDF Processing Service is running"}
 
+
+@app.post("/user/profile")
+async def user():
+    return { "data": {"name": 'John Doe', 'email': 'john.doe@company.com'}  }
+
 @app.post("/invoice_process")
 async def process_pdf_endpoint(request: ProcessPDFRequest):
     """
