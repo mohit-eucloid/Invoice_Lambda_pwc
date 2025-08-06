@@ -32,7 +32,7 @@
             width: 20px;
             height: 20px;
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #4f46e5;
+            border-top: 3px solid #852603;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -174,14 +174,110 @@
             color: #6b7280;
         }
 
-        /* Stats Cards */
-        .stats-grid {
+        /* Action Cards Section */
+        .action-cards-section {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
             margin-bottom: 32px;
         }
 
+        .action-card {
+            background: linear-gradient(135deg, #e85602, #be003c);
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            pointer-events: none;
+        }
+
+        .action-card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-card-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .action-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .action-card-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+
+        /* Main Content Area Layout */
+        .main-content-area {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .left-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-sidebar {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 24px;
+        }
+
+        /* Update Stats Grid for Sidebar */
+        .right-sidebar .stats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .right-sidebar .stat-card {
+            margin-bottom: 0;
+        }
+
+        /* Stats Cards */
         .stat-card {
             background: white;
             border-radius: 8px;
@@ -241,7 +337,7 @@
             display: flex;
             align-items: center;
             font-size: 14px;
-            color: #10b981;
+            color: #be003c;
         }
 
         .stat-trend svg {
@@ -257,12 +353,11 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Charts */
-        .charts-grid {
+        /* Charts Grid Update */
+        .left-content .charts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            margin-bottom: 32px;
+            gap: 24px;
         }
 
         .chart-card {
@@ -378,8 +473,9 @@
             display: none;
         }
         
+        /* Update Upload Button Theme */
         .upload-button {
-            background: #10b981;
+            background: linear-gradient(135deg, #eb6c0a, #be003c);
             color: white;
             border: none;
             padding: 14px 28px;
@@ -391,13 +487,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
         }
 
         .upload-button:hover {
-            background: #059669;
+            background: linear-gradient(135deg, #f8004f, #95002f);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
         }
 
         .upload-button svg {
@@ -420,7 +516,7 @@
         .back-button {
             display: inline-flex;
             align-items: center;
-            color: #4f46e5;
+            color: #be003c;
             text-decoration: none;
             font-weight: 500;
             margin-bottom: 24px;
@@ -428,7 +524,7 @@
         }
 
         .back-button:hover {
-            color: #4338ca;
+            color: #be003c;
         }
 
         .back-button svg {
@@ -457,7 +553,7 @@
         }
 
         .upload-area {
-            border: 2px dashed #c084fc;
+            border: 2px dashed #d94500;
             border-radius: 12px;
             padding: 48px;
             text-align: center;
@@ -466,12 +562,12 @@
         }
 
         .upload-area:hover {
-            border-color: #a855f7;
+            border-color: #d94500;
             background: #faf5ff;
         }
 
         .upload-area.dragover {
-            border-color: #4f46e5;
+            border-color: #d94500;
             background: #eef2ff;
         }
 
@@ -494,7 +590,7 @@
         .upload-icon svg {
             width: 32px;
             height: 32px;
-            color: #4f46e5;
+            color: #d94500;
         }
 
         .upload-text {
@@ -533,7 +629,7 @@
         }
 
         .processing-text {
-            color: #4f46e5;
+            color: #d94500;
             font-weight: 500;
         }
 
@@ -548,7 +644,7 @@
 
         .progress-fill {
             height: 100%;
-            background: #4f46e5;
+            background: #d94500;
             border-radius: 2px;
             transition: width 0.3s ease;
             width: 0%;
@@ -760,13 +856,17 @@
             margin-right: 8px;
         }
 
+        /* Update Primary Button Colors */
         .btn-primary {
-            background: #4f46e5;
+            background: linear-gradient(135deg, #ca6130, #be003c);
             color: white;
+            border: 1px solid transparent;
         }
 
         .btn-primary:hover:not(:disabled) {
-            background: #4338ca;
+            background: linear-gradient(135deg, #ca6130, #be003c);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
         }
 
         .btn-secondary {
@@ -780,8 +880,14 @@
 
         /* Responsive */
         @media (max-width: 1024px) {
-            .charts-grid {
+            .main-content-area {
                 grid-template-columns: 1fr;
+            }
+            
+            .right-sidebar .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                flex-direction: row;
+                flex-wrap: wrap;
             }
             
             .results-grid {
@@ -790,11 +896,26 @@
             }
         }
 
-        @media (max-width: 640px) {
-            .stats-grid {
+        @media (max-width: 768px) {
+            .action-cards-section {
                 grid-template-columns: 1fr;
             }
             
+            .main-content-area {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .right-sidebar .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .left-content .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
             .dashboard {
                 padding: 16px;
             }
@@ -978,8 +1099,73 @@
 
             <div class="error-message" id="dashboardError"></div>
 
-            <!-- Stats Cards -->
-            <div class="stats-grid" id="statsGrid">
+            <!-- Action Cards (Top Section) -->
+            <div class="action-cards-section">
+                <div class="action-card settings" onclick="showSettings()">
+                    <div class="action-card-icon settings">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="action-card-title">Settings</div>
+                    <div class="action-card-description">Access control, API keys, link sources & DB/ERP</div>
+                </div>
+                
+                <div class="action-card help" onclick="showHelp()">
+                    <div class="action-card-icon help">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="action-card-title">Help</div>
+                    <div class="action-card-description">Step-by-step guide to using the UI</div>
+                </div>
+                
+                <div class="action-card audit" onclick="showAudit()">
+                    <div class="action-card-icon audit">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="action-card-title">Audit</div>
+                    <div class="action-card-description">Review and audit processed invoices</div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="main-content-area">
+                <!-- Left Content -->
+                <div class="left-content">
+                    <h1 class="sidebar-title">Analytics Overview</h1>
+                    <!-- Charts -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3 class="chart-title">Monthly Invoice Processing</h3>
+                            <div class="chart-container">
+                                <div class="chart-loading">
+                                    <div class="loading"></div>
+                                </div>
+                                <canvas id="monthlyChart" style="display: none;"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3 class="chart-title">Invoice Types Distribution</h3>
+                            <div class="chart-container">
+                                <div class="chart-loading">
+                                    <div class="loading"></div>
+                                </div>
+                                <canvas id="pieChart" style="display: none;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar - Stats Cards -->
+                <div class="right-sidebar">
+                    <!-- <h3 class="sidebar-title">Analytics Overview</h3> -->
+                    <div class="stats-grid" id="statsGrid">
                 <div class="stat-card">
                     <div class="stat-loading">
                         <div class="loading"></div>
@@ -1094,27 +1280,6 @@
                         <span id="validationScoreTrendText">-</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h3 class="chart-title">Monthly Invoice Processing</h3>
-                    <div class="chart-container">
-                        <div class="chart-loading">
-                            <div class="loading"></div>
-                        </div>
-                        <canvas id="monthlyChart" style="display: none;"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <h3 class="chart-title">Invoice Types Distribution</h3>
-                    <div class="chart-container">
-                        <div class="chart-loading">
-                            <div class="loading"></div>
-                        </div>
-                        <canvas id="pieChart" style="display: none;"></canvas>
                     </div>
                 </div>
             </div>
@@ -1478,7 +1643,7 @@
             // Process API - Modified to work like second file, returns direct results
             async processInvoice(uploadData, options = {}) {
                 const payload = {
-                    api_key: "AIzaSyDFE1dtBB918ToieGI-fSF5EvS0IMGjYN4",
+                    api_key: "AIzaSyBJsco9WFwzAECQtmlVI-B446zqVdHr0IA",
                     s3_url: uploadData.presigned_url,  // Use presigned URL instead of bucket/key
                     custom_prompt: `Please analyze this PDF invoice document and extract all the information in the exact JSON format specified below.
 
@@ -1663,7 +1828,7 @@ Return ONLY the JSON object, no additional text or explanation.`,
             // Validation API - New validation functionality
             async validateInvoice(extractedData, uploadData, options = {}) {
                 const payload = {
-                    api_key: "AIzaSyDFE1dtBB918ToieGI-fSF5EvS0IMGjYN4",
+                    api_key: "AIzaSyBJsco9WFwzAECQtmlVI-B446zqVdHr0IA",
                     s3_url: currentPdfUrl,  // Use presigned URL instead of bucket/key
                     top_p: 0.95,
                     temperature: 0,
@@ -2447,7 +2612,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
             
             // Show success message
             const successMsg = document.createElement('div');
-            successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 12px 20px; border-radius: 8px; z-index: 10000;';
+            successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #be003c; color: white; padding: 12px 20px; border-radius: 8px; z-index: 10000;';
             successMsg.textContent = 'Changes saved successfully!';
             document.body.appendChild(successMsg);
             
@@ -2517,7 +2682,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                     checkmark = document.createElement('div');
                     checkmark.className = 'checkmark';
                     checkmark.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px" style="color: #10b981;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px" style="color: #be003c;">
                             <path d="M0 0h24v24H0z" fill="none"/>
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                         </svg>`;
@@ -2615,7 +2780,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                     container.innerHTML = `
                         <div class="processing-placeholder">
                             <div class="processing-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="be003c">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0.621 0 1.125-.504 1.125-1.125V9.375c0-.621.504-1.125 1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
                                 </svg>
                             </div>
@@ -3417,6 +3582,19 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        // Action card functions
+        function showSettings() {
+            alert('Settings: Configure access control, API key management, link invoice sources, and connect to DB/ERP systems.');
+        }
+
+        function showHelp() {
+            alert('Help: Step-by-step guide to using the UI - upload invoices, view analytics, export data, and manage settings.');
+        }
+
+        function showAudit() {
+            alert('Audit: Review and audit processed invoices - verify extraction accuracy, check compliance, and validate data quality.');
         }
 
         // Event Listeners
