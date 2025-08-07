@@ -32,7 +32,7 @@
             width: 20px;
             height: 20px;
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #4f46e5;
+            border-top: 3px solid #852603;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -85,59 +85,6 @@
 
         .error-message.show {
             display: block;
-        }
-
-        /* Success Toast */
-        .success-toast {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            background: rgba(34, 197, 94, 0.75);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            z-index: 10000;
-            opacity: 0;
-            transform: translateY(-10px) scale(0.95);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 400px;
-        }
-
-        .success-toast.show {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        .success-toast.hide {
-            opacity: 0;
-            transform: translateY(-10px) scale(0.95);
-        }
-
-        .success-toast-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-        }
-
-        .success-toast-content {
-            flex: 1;
-        }
-
-        .success-toast-title {
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .success-toast-message {
-            font-size: 14px;
-            opacity: 0.9;
         }
 
         /* Header Styles */
@@ -227,14 +174,110 @@
             color: #6b7280;
         }
 
-        /* Stats Cards */
-        .stats-grid {
+        /* Action Cards Section */
+        .action-cards-section {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
             margin-bottom: 32px;
         }
 
+        .action-card {
+            background: linear-gradient(135deg, #e85602, #be003c);
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            pointer-events: none;
+        }
+
+        .action-card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-card-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .action-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .action-card-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+
+        /* Main Content Area Layout */
+        .main-content-area {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .left-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-sidebar {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 24px;
+        }
+
+        /* Update Stats Grid for Sidebar */
+        .right-sidebar .stats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .right-sidebar .stat-card {
+            margin-bottom: 0;
+        }
+
+        /* Stats Cards */
         .stat-card {
             background: white;
             border-radius: 8px;
@@ -294,7 +337,7 @@
             display: flex;
             align-items: center;
             font-size: 14px;
-            color: #10b981;
+            color: #be003c;
         }
 
         .stat-trend svg {
@@ -310,12 +353,11 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Charts */
-        .charts-grid {
+        /* Charts Grid Update */
+        .left-content .charts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            margin-bottom: 32px;
+            gap: 24px;
         }
 
         .chart-card {
@@ -431,8 +473,9 @@
             display: none;
         }
         
+        /* Update Upload Button Theme */
         .upload-button {
-            background: #10b981;
+            background: linear-gradient(135deg, #eb6c0a, #be003c);
             color: white;
             border: none;
             padding: 14px 28px;
@@ -444,13 +487,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
         }
 
         .upload-button:hover {
-            background: #059669;
+            background: linear-gradient(135deg, #f8004f, #95002f);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
         }
 
         .upload-button svg {
@@ -473,7 +516,7 @@
         .back-button {
             display: inline-flex;
             align-items: center;
-            color: #4f46e5;
+            color: #be003c;
             text-decoration: none;
             font-weight: 500;
             margin-bottom: 24px;
@@ -481,7 +524,7 @@
         }
 
         .back-button:hover {
-            color: #4338ca;
+            color: #be003c;
         }
 
         .back-button svg {
@@ -510,7 +553,7 @@
         }
 
         .upload-area {
-            border: 2px dashed #c084fc;
+            border: 2px dashed #d94500;
             border-radius: 12px;
             padding: 48px;
             text-align: center;
@@ -519,12 +562,12 @@
         }
 
         .upload-area:hover {
-            border-color: #a855f7;
+            border-color: #d94500;
             background: #faf5ff;
         }
 
         .upload-area.dragover {
-            border-color: #4f46e5;
+            border-color: #d94500;
             background: #eef2ff;
         }
 
@@ -547,7 +590,7 @@
         .upload-icon svg {
             width: 32px;
             height: 32px;
-            color: #4f46e5;
+            color: #d94500;
         }
 
         .upload-text {
@@ -586,7 +629,7 @@
         }
 
         .processing-text {
-            color: #4f46e5;
+            color: #d94500;
             font-weight: 500;
         }
 
@@ -601,7 +644,7 @@
 
         .progress-fill {
             height: 100%;
-            background: #4f46e5;
+            background: #d94500;
             border-radius: 2px;
             transition: width 0.3s ease;
             width: 0%;
@@ -616,32 +659,6 @@
 
         .results-header {
             margin-bottom: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        .results-header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            gap: 16px;
-        }
-        
-        .results-header-left {
-            flex: 1;
-        }
-        
-        .results-header-buttons {
-            display: flex;
-            gap: 12px;
-            min-width: 0;
-            flex: 1 1 50%;
-            max-width: 50%;
-        }
-        
-        .results-header-buttons .btn {
-            flex: 1;
         }
 
         .results-title {
@@ -839,13 +856,17 @@
             margin-right: 8px;
         }
 
+        /* Update Primary Button Colors */
         .btn-primary {
-            background: #4f46e5;
+            background: linear-gradient(135deg, #ca6130, #be003c);
             color: white;
+            border: 1px solid transparent;
         }
 
         .btn-primary:hover:not(:disabled) {
-            background: #4338ca;
+            background: linear-gradient(135deg, #ca6130, #be003c);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
         }
 
         .btn-secondary {
@@ -857,157 +878,16 @@
             background: #374151;
         }
 
-        /* Custom button colors */
-        .btn-edit {
-            background: #be003c !important;
-            color: white !important;
-        }
-        .btn-edit:hover:not(:disabled) {
-            background: #a50034 !important;
-        }
-        
-        .btn-validate {
-            background: #be003c !important;
-            color: white !important;
-        }
-        .btn-validate:hover:not(:disabled) {
-            background: #a50034 !important;
-        }
-
-        /* Export Modal Styles */
-        .export-modal {
-            display: none;
-            position: fixed;
-            z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .export-modal-content {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow: hidden;
-        }
-
-        .export-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 24px;
-            border-bottom: 1px solid #e5e7eb;
-            background: #f9fafb;
-        }
-
-        .export-modal-header h2 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .export-modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            font-weight: bold;
-            color: #6b7280;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .export-modal-close:hover {
-            color: #374151;
-            background: #e5e7eb;
-        }
-
-        .export-modal-body {
-            padding: 24px;
-        }
-
-        .export-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
-        }
-
-        .export-option {
-            display: flex;
-            align-items: center;
-            padding: 20px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: white;
-        }
-
-        .export-option:hover {
-            border-color: #4f46e5;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .export-option-icon {
-            width: 48px;
-            height: 48px;
-            margin-right: 16px;
-            flex-shrink: 0;
-        }
-
-        .export-option-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .export-option-text {
-            flex: 1;
-        }
-
-        .export-option-text h3 {
-            margin: 0 0 4px 0;
-            font-size: 16px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .export-option-text p {
-            margin: 0;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        /* Responsive adjustments for modal */
-        @media (max-width: 640px) {
-            .export-modal-content {
-                width: 95%;
-                margin: 20px;
-            }
-            
-            .export-options {
-                grid-template-columns: 1fr;
-            }
-            
-            .export-modal-header,
-            .export-modal-body {
-                padding: 16px;
-            }
-        }
-
         /* Responsive */
         @media (max-width: 1024px) {
-            .charts-grid {
+            .main-content-area {
                 grid-template-columns: 1fr;
+            }
+            
+            .right-sidebar .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                flex-direction: row;
+                flex-wrap: wrap;
             }
             
             .results-grid {
@@ -1016,11 +896,26 @@
             }
         }
 
-        @media (max-width: 640px) {
-            .stats-grid {
+        @media (max-width: 768px) {
+            .action-cards-section {
                 grid-template-columns: 1fr;
             }
             
+            .main-content-area {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .right-sidebar .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .left-content .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
             .dashboard {
                 padding: 16px;
             }
@@ -1204,8 +1099,73 @@
 
             <div class="error-message" id="dashboardError"></div>
 
-            <!-- Stats Cards -->
-            <div class="stats-grid" id="statsGrid">
+            <!-- Action Cards (Top Section) -->
+            <div class="action-cards-section">
+                <div class="action-card settings" onclick="showSettings()">
+                    <div class="action-card-icon settings">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="action-card-title">Settings</div>
+                    <div class="action-card-description">Access control, API keys, link sources & DB/ERP</div>
+                </div>
+                
+                <div class="action-card help" onclick="showHelp()">
+                    <div class="action-card-icon help">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="action-card-title">Help</div>
+                    <div class="action-card-description">Step-by-step guide to using the UI</div>
+                </div>
+                
+                <div class="action-card audit" onclick="showAudit()">
+                    <div class="action-card-icon audit">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="action-card-title">Audit</div>
+                    <div class="action-card-description">Review and audit processed invoices</div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="main-content-area">
+                <!-- Left Content -->
+                <div class="left-content">
+                    <h1 class="sidebar-title">Analytics Overview</h1>
+                    <!-- Charts -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3 class="chart-title">Monthly Invoice Processing</h3>
+                            <div class="chart-container">
+                                <div class="chart-loading">
+                                    <div class="loading"></div>
+                                </div>
+                                <canvas id="monthlyChart" style="display: none;"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3 class="chart-title">Invoice Types Distribution</h3>
+                            <div class="chart-container">
+                                <div class="chart-loading">
+                                    <div class="loading"></div>
+                                </div>
+                                <canvas id="pieChart" style="display: none;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar - Stats Cards -->
+                <div class="right-sidebar">
+                    <!-- <h3 class="sidebar-title">Analytics Overview</h3> -->
+                    <div class="stats-grid" id="statsGrid">
                 <div class="stat-card">
                     <div class="stat-loading">
                         <div class="loading"></div>
@@ -1320,27 +1280,6 @@
                         <span id="validationScoreTrendText">-</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h3 class="chart-title">Monthly Invoice Processing</h3>
-                    <div class="chart-container">
-                        <div class="chart-loading">
-                            <div class="loading"></div>
-                        </div>
-                        <canvas id="monthlyChart" style="display: none;"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <h3 class="chart-title">Invoice Types Distribution</h3>
-                    <div class="chart-container">
-                        <div class="chart-loading">
-                            <div class="loading"></div>
-                        </div>
-                        <canvas id="pieChart" style="display: none;"></canvas>
                     </div>
                 </div>
             </div>
@@ -1442,20 +1381,13 @@
 
         <div class="results-container">
             <div class="results-header">
-                <div class="results-header-top">
-                    <div class="results-header-left">
-                        <div class="back-button" onclick="showDashboard()">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                            </svg>
-                            Back to Dashboard
-                        </div>
-                        <h1 class="results-title">Extraction Results</h1>
-                    </div>
-                    <div class="results-header-buttons" id="extractionActionButtons">
-                        <!-- Buttons will be inserted here -->
-                    </div>
+                <div class="back-button" onclick="showDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Dashboard
                 </div>
+                <h1 class="results-title">Extraction Results</h1>
             </div>
 
             <div class="error-message" id="resultsError"></div>
@@ -1519,20 +1451,13 @@
 
         <div class="results-container">
             <div class="results-header">
-                <div class="results-header-top">
-                    <div class="results-header-left">
-                        <div class="back-button" onclick="showResults()">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                            </svg>
-                            Back to Results
-                        </div>
-                        <h1 class="results-title">AI Validation</h1>
-                    </div>
-                    <div class="results-header-buttons" id="validationActionButtons">
-                        <!-- Buttons will be inserted here -->
-                    </div>
+                <div class="back-button" onclick="showResults()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Results
                 </div>
+                <h1 class="results-title">AI Validation</h1>
             </div>
 
             <div class="error-message" id="validationError"></div>
@@ -1861,8 +1786,8 @@ Return ONLY the JSON object, no additional text or explanation.`,
                 };
                 try {
                     console.log('Processing invoice with:', payload);
-
-                    const response = await fetch(`http://3.234.229.32:8001/invoice_process`, {
+                    
+                    const response = await fetch(`/invoice_process`, {
                         method: 'POST',
                         mode: 'cors',
                         headers: {
@@ -2295,8 +2220,8 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                 
                 try {
                     console.log('Validating invoice with:', payload);
-
-                    const response = await fetch(`http://3.234.229.32:8001/invoice_process`, {
+                    
+                    const response = await fetch(`/invoice_process`, {
                         method: 'POST',
                         mode: 'cors',
                         headers: {
@@ -2347,45 +2272,6 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
             errorElement.classList.remove('show');
         }
 
-        function showSuccessToast(title, message) {
-            // Remove any existing toast
-            const existingToast = document.querySelector('.success-toast');
-            if (existingToast) {
-                existingToast.remove();
-            }
-
-            // Create toast element
-            const toast = document.createElement('div');
-            toast.className = 'success-toast';
-            toast.innerHTML = `
-                <div class="success-toast-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div class="success-toast-content">
-                    <div class="success-toast-title">${title}</div>
-                    <div class="success-toast-message">${message}</div>
-                </div>
-            `;
-
-            // Add to body
-            document.body.appendChild(toast);
-
-            // Show with animation
-            setTimeout(() => toast.classList.add('show'), 10);
-
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                toast.classList.add('hide');
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.remove();
-                    }
-                }, 300);
-            }, 5000);
-        }
-
         function formatCurrency(amount, currency = 'INR') {
             if (currency === 'INR') {
                 if (amount >= 10000000) { // 1 crore
@@ -2418,7 +2304,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
             document.getElementById('upload').classList.add('active');
             
             // Load user profile for API screens
-            if (!currentUser || currentUser.name === 'John Doe') {
+            if (!currentUser || currentUser.name === 'User Doe') {
                 await loadUserProfileForAPI();
             }
             
@@ -2431,7 +2317,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
             document.getElementById('results').classList.add('active');
             
             // Load user profile for API screens
-            if (!currentUser || currentUser.name === 'John Doe') {
+            if (!currentUser || currentUser.name === 'User Doe') {
                 await loadUserProfileForAPI();
             }
             
@@ -2443,7 +2329,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
             document.getElementById('validation').classList.add('active');
             
             // Load user profile for API screens
-            if (!currentUser || currentUser.name === 'John Doe') {
+            if (!currentUser || currentUser.name === 'User Doe') {
                 await loadUserProfileForAPI();
             }
             
@@ -2522,7 +2408,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
         function loadUserProfile() {
             // Use dummy user data for dashboard
             currentUser = { 
-                name: 'John Doe', 
+                name: 'User Doe', 
                 email: 'john.doe@company.com' 
             };
             updateUserDisplay();
@@ -2726,7 +2612,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
             
             // Show success message
             const successMsg = document.createElement('div');
-            successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 12px 20px; border-radius: 8px; z-index: 10000;';
+            successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #be003c; color: white; padding: 12px 20px; border-radius: 8px; z-index: 10000;';
             successMsg.textContent = 'Changes saved successfully!';
             document.body.appendChild(successMsg);
             
@@ -2796,7 +2682,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                     checkmark = document.createElement('div');
                     checkmark.className = 'checkmark';
                     checkmark.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px" style="color: #10b981;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px" style="color: #be003c;">
                             <path d="M0 0h24v24H0z" fill="none"/>
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                         </svg>`;
@@ -2836,9 +2722,6 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                 
                 // Store results directly
                 extractionResults = processResponse;
-                
-                // Show success toast for extraction
-                showSuccessToast('Extraction Complete!', 'Invoice data has been successfully extracted from your document.');
                 
                 // Always update the results display when processing completes
                 if (document.getElementById('results').classList.contains('active')) {
@@ -2897,7 +2780,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                     container.innerHTML = `
                         <div class="processing-placeholder">
                             <div class="processing-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="be003c">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0.621 0 1.125-.504 1.125-1.125V9.375c0-.621.504-1.125 1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
                                 </svg>
                             </div>
@@ -2950,20 +2833,18 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                         </h4>
                         <pre style="background: #f8fafc; padding: 1rem; border-radius: 8px; white-space: pre-wrap; font-size: 0.875rem; max-height: 400px; overflow-y: auto;">${data}</pre>
                     </div>
-                `;
-                
-                // Add buttons to the dedicated container for raw text response
-                const buttonContainer = document.getElementById('extractionActionButtons');
-                if (buttonContainer) {
-                    buttonContainer.innerHTML = `
-                        <button class="btn btn-primary" onclick="showExportModal()" id="exportBtn">
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="exportData()" id="exportBtn">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                             Export Data
                         </button>
-                    `;
-                }
+                        <button class="btn btn-secondary" onclick="showDashboard()">
+                            Done
+                        </button>
+                    </div>
+                `;
                 return;
             }
 
@@ -3016,24 +2897,12 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                     allInvoicesHtml += generateInvoiceHtml(invoice, index + 1, validation);
                 });
                 
-                container.innerHTML = allInvoicesHtml;
-                
-                // Add buttons to the dedicated container
-                const buttonContainer = document.getElementById('extractionActionButtons');
-                if (buttonContainer) {
-                    buttonContainer.innerHTML = generateActionButtons(validation);
-                }
+                container.innerHTML = allInvoicesHtml + generateActionButtons(validation);
                 return;
             }
 
             // Handle single invoice object
-            container.innerHTML = validationScoreHtml + generateInvoiceHtml(processedData, null, validation);
-            
-            // Add buttons to the dedicated container
-            const buttonContainer = document.getElementById('extractionActionButtons');
-            if (buttonContainer) {
-                buttonContainer.innerHTML = generateActionButtons(validation);
-            }
+            container.innerHTML = validationScoreHtml + generateInvoiceHtml(processedData, null, validation) + generateActionButtons(validation);
         }
 
         function generateInvoiceHtml(processedData, invoiceNumber = null, validation = null) {
@@ -3298,7 +3167,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                         ${processedData.payment_summary.total_invoice_value !== null ? generateDataRow('Total Invoice Value', formatCurrency(processedData.payment_summary.total_invoice_value), 'payment_summary.total_invoice_value') : ''}
                         ${processedData.payment_summary.total_invoice_value_in_words ? generateDataRow('Total Invoice Value (in words)', processedData.payment_summary.total_invoice_value_in_words, 'payment_summary.total_invoice_value_in_words') : ''}
                         ${processedData.payment_summary.amount_due !== null ? generateDataRow('Amount Due', formatCurrency(processedData.payment_summary.amount_due), 'payment_summary.amount_due') : ''}
-                        ${processedData.payment_summary.payment_terms ? generatePaymentTermsRow('Payment Terms', processedData.payment_summary.payment_terms, 'payment_summary.payment_terms', validation) : ''}
+                        ${processedData.payment_summary.payment_terms ? generateDataRow('Payment Terms', processedData.payment_summary.payment_terms, 'payment_summary.payment_terms') : ''}
                         ${processedData.payment_summary.payment_status ? generateDataRow('Payment Status', processedData.payment_summary.payment_status, 'payment_summary.payment_status') : ''}
                     </div>
                 </div>
@@ -3313,71 +3182,10 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
             return [address.street, address.city, address.state, address.pincode, address.country].filter(Boolean).join(', ');
         }
 
-        function formatPaymentTerms(paymentTerms) {
-            if (!paymentTerms) return 'N/A';
-            
-            // Split by numbered points (looking for patterns like "1." or "2." etc.)
-            const terms = paymentTerms.split(/(?=\d+\.\s)/);
-            
-            // Filter out empty strings and format each term
-            const formattedTerms = terms
-                .filter(term => term.trim())
-                .map((term, index) => {
-                    const cleanTerm = term.trim();
-                    // If it doesn't start with a number, treat it as the first item
-                    if (!cleanTerm.match(/^\d+\./)) {
-                        return `<li style="margin-bottom: 12px; line-height: 1.6; text-align: justify;">${cleanTerm}</li>`;
-                    }
-                    // Remove the number prefix and format
-                    const content = cleanTerm.replace(/^\d+\.\s*/, '');
-                    return `<li style="margin-bottom: 12px; line-height: 1.6; text-align: justify;">${content}</li>`;
-                });
-
-            if (formattedTerms.length === 0) {
-                return `<div style="line-height: 1.6; text-align: justify;">${paymentTerms}</div>`;
-            }
-
-            return `<ol style="padding-left: 20px; margin: 0; color: #374151;">${formattedTerms.join('')}</ol>`;
-        }
-
-        function generatePaymentTermsRow(label, value, fieldPath = null, validation = null) {
-            const error = fieldPath && validation ? validation.errors.find(error => error.field_path === fieldPath) : null;
-            const hasError = error !== null;
-            
-            const formattedTerms = formatPaymentTerms(value);
-            
-            let row = `<div class="data-row" ${hasError ? 'style="background-color: #fef2f2; border-left: 3px solid #ef4444; padding-left: 16px; margin: 4px 0; border-radius: 6px;"' : ''}>
-                <span class="data-label" ${hasError ? 'style="color: #374151;"' : ''}>${label}</span>
-                <div class="data-value editable-field" data-field-path="${fieldPath || ''}" ${hasError ? 'style="color: #dc2626; font-weight: 600;"' : 'style="color: #1f2937;"'}>
-                    ${formattedTerms}
-                </div>
-            </div>`;
-            
-            if (hasError && error) {
-                row += `
-                    <div style="background-color: #fef2f2; border-left: 3px solid #ef4444; padding: 12px 16px; margin: 4px 0 8px 0; border-radius: 6px;">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.732 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                            </svg>
-                            <span style="color: #ef4444; font-weight: 600; font-size: 14px;">Validation Error</span>
-                        </div>
-                        <div style="color: #dc2626; font-size: 14px; line-height: 1.4;">
-                            <strong>Issue:</strong> ${error.issue}<br>
-                            <strong>Expected:</strong> ${error.expected}<br>
-                            <strong>Current:</strong> ${error.current}
-                        </div>
-                    </div>
-                `;
-            }
-            
-            return row;
-        }
-
         function generateActionButtons(validation = null) {
             const hasValidation = validation !== null;
             const validateButton = hasValidation ? '' : `
-                <button class="btn btn-validate" onclick="showValidation()" id="validateBtn">
+                <button class="btn btn-primary" onclick="showValidation()" id="validateBtn">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -3385,7 +3193,7 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                 </button>`;
             
             const editButton = hasValidation ? `
-                <button class="btn btn-edit" onclick="toggleEditMode()" id="editBtn" style="display: ${isEditMode ? 'none' : 'flex'}">
+                <button class="btn btn-secondary" onclick="toggleEditMode()" id="editBtn" style="display: ${isEditMode ? 'none' : 'flex'}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
@@ -3399,14 +3207,19 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                 </button>` : '';
 
             return `
-                ${validateButton}
-                ${editButton}
-                <button class="btn btn-primary" onclick="showExportModal()" id="exportBtn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Export Data
-                </button>
+                <div class="action-buttons">
+                    ${validateButton}
+                    ${editButton}
+                    <button class="btn btn-primary" onclick="exportData()" id="exportBtn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="showDashboard()">
+                        Done
+                    </button>
+                </div>
             `;
         }
 
@@ -3484,9 +3297,6 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                 validationResults = await api.validateInvoice(extractionResults, uploadData);
                 console.log('Validation results:', validationResults);
 
-                // Show success toast for validation
-                showSuccessToast('Validation Complete!', 'Invoice data has been successfully validated and is ready for review.');
-
                 // Update display with validation results
                 displayValidationResults(extractionResults, validationResults);
 
@@ -3529,13 +3339,8 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                         <h4 class="section-title">Validation Results</h4>
                         <pre style="background: #f8fafc; padding: 1rem; border-radius: 8px; white-space: pre-wrap; font-size: 0.875rem; max-height: 400px; overflow-y: auto;">${data}</pre>
                     </div>
+                    ${generateValidationActionButtons(validation)}
                 `;
-                
-                // Add buttons to the dedicated container for raw text response
-                const buttonContainer = document.getElementById('validationActionButtons');
-                if (buttonContainer) {
-                    buttonContainer.innerHTML = generateValidationActionButtons(validation);
-                }
                 return;
             }
 
@@ -3587,31 +3392,19 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                     allInvoicesHtml += generateInvoiceHtml(invoice, index + 1, validation);
                 });
                 
-                container.innerHTML = allInvoicesHtml;
-                
-                // Add buttons to the dedicated container
-                const buttonContainer = document.getElementById('validationActionButtons');
-                if (buttonContainer) {
-                    buttonContainer.innerHTML = generateValidationActionButtons(validation);
-                }
+                container.innerHTML = allInvoicesHtml + generateValidationActionButtons(validation);
                 return;
             }
 
             // Handle single invoice object with proper formatting
-            container.innerHTML = validationScoreHtml + generateInvoiceHtml(processedData, null, validation);
-            
-            // Add buttons to the dedicated container
-            const buttonContainer = document.getElementById('validationActionButtons');
-            if (buttonContainer) {
-                buttonContainer.innerHTML = generateValidationActionButtons(validation);
-            }
+            container.innerHTML = validationScoreHtml + generateInvoiceHtml(processedData, null, validation) + generateValidationActionButtons(validation);
         }
 
         function generateValidationActionButtons(validation = null) {
             const hasValidation = validation !== null;
             
             const editButton = hasValidation ? `
-                <button class="btn btn-edit" onclick="toggleValidationEditMode()" id="validationEditBtn" style="display: ${isEditMode ? 'none' : 'flex'}">
+                <button class="btn btn-secondary" onclick="toggleValidationEditMode()" id="validationEditBtn" style="display: ${isEditMode ? 'none' : 'flex'}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
@@ -3625,13 +3418,18 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                 </button>` : '';
 
             return `
-                ${editButton}
-                <button class="btn btn-primary" onclick="showExportModal()" id="validationExportBtn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Export Data
-                </button>
+                <div class="action-buttons">
+                    ${editButton}
+                    <button class="btn btn-primary" onclick="exportValidationData()" id="validationExportBtn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="showDashboard()">
+                        Done
+                    </button>
+                </div>
             `;
         }
 
@@ -3786,6 +3584,19 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
             document.body.removeChild(link);
         }
 
+        // Action card functions
+        function showSettings() {
+            alert('Settings: Configure access control, API key management, link invoice sources, and connect to DB/ERP systems.');
+        }
+
+        function showHelp() {
+            alert('Help: Step-by-step guide to using the UI - upload invoices, view analytics, export data, and manage settings.');
+        }
+
+        function showAudit() {
+            alert('Audit: Review and audit processed invoices - verify extraction accuracy, check compliance, and validate data quality.');
+        }
+
         // Event Listeners
         document.addEventListener('DOMContentLoaded', () => {
             showDashboard();
@@ -3825,135 +3636,6 @@ Remember: The goal is to validate that the extracted JSON contains the same **me
                 }
             });
         });
-
-        // Export Modal Functions
-        function showExportModal() {
-            const modal = document.getElementById('exportModal');
-            modal.style.display = 'flex';
-        }
-
-        function hideExportModal() {
-            const modal = document.getElementById('exportModal');
-            modal.style.display = 'none';
-        }
-
-        function exportAsJSON() {
-            // Check if we're on the validation page by looking at the current screen
-            const validationScreen = document.getElementById('validation');
-            if (validationScreen && validationScreen.classList.contains('active')) {
-                exportValidationData();
-            } else {
-                exportData();
-            }
-            hideExportModal();
-        }
-
-        function exportToZoho() {
-            alert('Export to Zoho functionality - Coming Soon!');
-            hideExportModal();
-        }
-
-        function exportToSAP() {
-            alert('Export to SAP functionality - Coming Soon!');
-            hideExportModal();
-        }
-
-        function exportToTally() {
-            alert('Export to Tally functionality - Coming Soon!');
-            hideExportModal();
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('exportModal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        hideExportModal();
-                    }
-                });
-            }
-        });
     </script>
-
-    <!-- Export Modal -->
-    <div id="exportModal" class="export-modal">
-        <div class="export-modal-content">
-            <div class="export-modal-header">
-                <h2>Export Data</h2>
-                <button class="export-modal-close" onclick="hideExportModal()">&times;</button>
-            </div>
-            <div class="export-modal-body">
-                <div class="export-options">
-                    <div class="export-option" onclick="exportAsJSON()">
-                        <div class="export-option-icon">
-                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="10" y="20" width="80" height="60" rx="5" fill="#f8f9fa" stroke="#ddd"/>
-                                <text x="50" y="45" text-anchor="middle" fill="#495057" font-family="monospace" font-size="12" font-weight="bold">JSON</text>
-                                <path d="M20 35 L25 35 M75 35 L80 35 M20 45 L30 45 M70 45 L80 45 M20 55 L35 55 M65 55 L80 55" stroke="#6c757d" stroke-width="1"/>
-                            </svg>
-                        </div>
-                        <div class="export-option-text">
-                            <h3>Export as JSON</h3>
-                            <p>Download data in JSON format</p>
-                        </div>
-                    </div>
-
-                    <div class="export-option" onclick="exportToZoho()">
-                        <div class="export-option-icon">
-                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="50" cy="50" r="40" fill="#1d4ed8"/>
-                                <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">ZOHO</text>
-                                <circle cx="35" cy="55" r="3" fill="white"/>
-                                <circle cx="50" cy="55" r="3" fill="white"/>
-                                <circle cx="65" cy="55" r="3" fill="white"/>
-                                <path d="M30 65 Q50 70 70 65" stroke="white" stroke-width="2" fill="none"/>
-                            </svg>
-                        </div>
-                        <div class="export-option-text">
-                            <h3>Export to Zoho</h3>
-                            <p>Send data to Zoho applications</p>
-                        </div>
-                    </div>
-
-                    <div class="export-option" onclick="exportToSAP()">
-                        <div class="export-option-icon">
-                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="10" y="30" width="80" height="40" rx="5" fill="#0f62fe"/>
-                                <text x="50" y="55" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="bold">SAP</text>
-                                <rect x="15" y="35" width="15" height="8" fill="white" opacity="0.3"/>
-                                <rect x="35" y="35" width="15" height="8" fill="white" opacity="0.3"/>
-                                <rect x="55" y="35" width="15" height="8" fill="white" opacity="0.3"/>
-                                <rect x="75" y="35" width="10" height="8" fill="white" opacity="0.3"/>
-                            </svg>
-                        </div>
-                        <div class="export-option-text">
-                            <h3>Export to SAP</h3>
-                            <p>Integrate with SAP systems</p>
-                        </div>
-                    </div>
-
-                    <div class="export-option" onclick="exportToTally()">
-                        <div class="export-option-icon">
-                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="15" y="20" width="70" height="60" rx="8" fill="#dc3545"/>
-                                <text x="50" y="40" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">TALLY</text>
-                                <rect x="25" y="50" width="50" height="3" fill="white" opacity="0.8"/>
-                                <rect x="25" y="55" width="35" height="2" fill="white" opacity="0.6"/>
-                                <rect x="25" y="58" width="45" height="2" fill="white" opacity="0.6"/>
-                                <rect x="25" y="61" width="25" height="2" fill="white" opacity="0.6"/>
-                                <circle cx="75" cy="65" r="8" fill="white"/>
-                                <text x="75" y="68" text-anchor="middle" fill="#dc3545" font-family="Arial" font-size="8" font-weight="bold">₹</text>
-                            </svg>
-                        </div>
-                        <div class="export-option-text">
-                            <h3>Export to Tally</h3>
-                            <p>Send to Tally accounting software</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
